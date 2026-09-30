@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEOVIZER CHANNEL - Filmes Adicionados</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050507;--surface:#121215;--border:#1E1E22;--border2:#2A2A30;--dim:#8B8B92}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:#fff;font-family:'Inter',system-ui,sans-serif}
+.highlight{background:linear-gradient(90deg,#FFD60A 0%,#FF8A00 35%,#FF2A2A 70%,#FF00E5 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-shadow:0 0 24px rgba(255,214,10,.35);font-weight:900;letter-spacing:-.04em}
+.header{position:sticky;top:0;z-index:100;background:rgba(5,5,7,.92);backdrop-filter:blur(22px);border-bottom:1px solid var(--border);height:84px;display:flex;align-items:center;justify-content:space-between;padding:0 26px}
+.logo{display:flex;gap:16px;align-items:center}
+.logo-icon{width:58px;height:58px;background:#0a1931;background:linear-gradient(135deg,#0a1931,#001a4d);border-radius:16px;display:grid;place-items:center;font-weight:900;font-size:24px;color:#000;box-shadow:0 0 26px rgba(0,180,255,.35);border:1px solid rgba(0,200,255,0.3);overflow:hidden;padding:4px}
+.logo-icon img{width:100%;height:100%;object-fit:contain}
+.live{padding:8px 14px;background:#151518;border:1px solid var(--border2);border-radius:999px;font-size:11px;font-weight:800;display:flex;gap:8px;align-items:center}
+.dot{width:8px;height:8px;background:#FF1E1E;border-radius:50%;box-shadow:0 0 12px #FF1E1E;animation:pulse 1.5s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,30,30,.6)}70%{box-shadow:0 0 0 10px rgba(255,30,30,0)}100%{box-shadow:0 0 0 0 rgba(255,30,30,0)}}
+.hero{max-width:1600px;margin:0 auto;padding:22px}
+.player-shell{border-radius:20px;overflow:hidden;border:1px solid #FFD60A;box-shadow:0 0 0 1px rgba(255,214,10,.15),0 20px 60px rgba(0,0,0,.6);background:#000;position:relative}
+.video-wrap{position:relative;aspect-ratio:16/9;background:#000;overflow:hidden;cursor:default}
+.topbar{position:absolute;top:0;left:0;right:0;padding:14px;display:flex;justify-content:space-between;pointer-events:none;z-index:10;background:linear-gradient(180deg,rgba(0,0,0,.75),transparent)}
+.brand{pointer-events:auto;padding:8px 14px;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(12px);border-radius:999px;font-size:12px;font-weight:800}
+.yt-wrap-main{position:absolute;inset:0;z-index:2;background:#000}
+.yt-wrap-main iframe,#player{width:100%;height:100%;border:0;display:block}
+.yt-mask{position:absolute;bottom:12px;right:12px;z-index:35;background:#0a1931;background:linear-gradient(135deg,#0a1931 0%,#001a4d 100%);padding:7px 12px 7px 14px;border-radius:12px;display:flex;align-items:center;gap:12px;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,0.8),0 0 0 1px rgba(0,200,255,0.3);border:1px solid rgba(0,180,255,0.35);max-width:75%;transform:none !important;opacity:1 !important;transition:none}
+.yt-mask-title{color:#fff;font-size:12px;font-weight:700;letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:320px;text-shadow:0 1px 3px rgba(0,0,0,0.8)}
+.yt-mask img{height:30px;width:auto;display:block;object-fit:contain;filter:brightness(1.1);flex-shrink:0}
+@media(max-width:768px){.yt-mask{bottom:12px;right:8px;padding:5px 10px;gap:8px;max-width:82%;z-index:35}.yt-mask-title{font-size:11px;max-width:170px}.yt-mask img{height:24px}}
+@media(max-width:480px){.yt-mask{bottom:10px;right:6px;max-width:78%}.yt-mask-title{max-width:110px;font-size:10px}}
+
+
+/* Em tela cheia - esconde demais informações mas MANTÉM o logo */
+#shell:fullscreen .topbar,
+#shell:-webkit-full-screen .topbar,
+#shell:-moz-full-screen .topbar,
+#shell:fullscreen .topcover,
+#shell:-webkit-full-screen .topcover,
+#shell:-moz-full-screen .topcover,
+#shell:fullscreen .brand,
+#shell:-webkit-full-screen .brand{
+  display:none !important;
+  opacity:0 !important;
+  visibility:hidden !important;
+}
+#shell:fullscreen .yt-mask,
+#shell:-webkit-full-screen .yt-mask,
+#shell:-moz-full-screen .yt-mask{
+  display:flex !important;
+  opacity:1 !important;
+  visibility:visible !important;
+}
+#shell:fullscreen,
+#shell:-webkit-full-screen,
+#shell:-moz-full-screen{
+  border-radius:0 !important;
+  border:none !important;
+}
+
+.yt-mask{pointer-events:none !important}
+.video-wrap:hover .yt-mask,.video-wrap .yt-mask{transform:none !important;opacity:1 !important;visibility:visible !important}
+
+.topcover{position:absolute;top:0;left:0;right:0;height:70px;background:linear-gradient(180deg,rgba(5,5,7,.95),transparent);pointer-events:none;z-index:5}
+.custom-controls{position:absolute;bottom:0;left:0;right:0;z-index:25;background:#050507;background:rgba(5,5,7,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.1);padding:0;transform:translateY(100%);opacity:0;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1),opacity 0.25s ease;pointer-events:none;box-shadow:0 -10px 30px rgba(0,0,0,0.98)}
+.video-wrap:hover .custom-controls,.custom-controls.visible{transform:translateY(0);opacity:1;pointer-events:auto}
+.progress-container{width:100%;height:9px;background:rgba(255,255,255,0.18);cursor:pointer;position:relative;transition:height 0.2s}
+.progress-container:hover{height:13px;background:rgba(255,255,255,0.32)}
+.progress-bar{width:100%;height:100%;position:relative}
+.progress-fill{height:100%;background:linear-gradient(90deg,#FFD60A,#FF8A00);width:0%;transition:width 0.15s linear;box-shadow:0 0 10px rgba(255,214,10,0.7);position:relative}
+.progress-fill::after{content:'';position:absolute;right:-7px;top:50%;transform:translateY(-50%);width:16px;height:16px;background:#FFD60A;border-radius:50%;box-shadow:0 0 10px rgba(255,214,10,0.9);opacity:0;transition:opacity 0.2s;border:2px solid #000}
+.progress-container:hover .progress-fill::after{opacity:1}
+.controls-row{display:flex;align-items:center;justify-content:space-between;padding:16px 22px 20px;gap:14px;background:rgba(5,5,7,0.98);background:#050507;min-height:62px}
+.left-controls,.right-controls{display:flex;align-items:center;gap:10px}
+.ctrl-btn{width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.12);color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:grid;place-items:center;transition:0.2s;backdrop-filter:blur(10px)}
+.ctrl-btn:hover{background:#FFD60A;color:#000;border-color:#FFD60A;transform:scale(1.08);box-shadow:0 0 14px rgba(255,214,10,0.5)}
+.ctrl-btn.play-pause{width:52px;height:52px;background:#fff;color:#000;border-color:#fff;font-size:20px}
+.ctrl-btn.play-pause:hover{background:#FFD60A;border-color:#FFD60A}
+.time-display{font-size:12px;color:#ddd;font-weight:600;letter-spacing:0.02em;min-width:100px}
+.title-display{font-size:12px;color:#FFD60A;font-weight:700;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:none}
+@media(min-width:900px){.title-display{display:block}}
+.volume-slider{width:110px;height:5px;-webkit-appearance:none;appearance:none;background:rgba(255,255,255,0.25);border-radius:3px;outline:none;cursor:pointer}
+.volume-slider::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:#FFD60A;cursor:pointer;box-shadow:0 0 8px rgba(255,214,10,0.7)}
+.volume-slider::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:#FFD60A;border:none;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;padding:0 22px 80px;max-width:1600px;margin:0 auto}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:.2s}
+.card:hover{transform:translateY(-3px);border-color:var(--border2)}
+.card.active{border-color:#FFD60A;box-shadow:0 0 0 1px #FFD60A,0 0 20px rgba(255,214,10,.25)}
+.thumb{aspect-ratio:16/9;background:#000;position:relative;overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:cover;transition:.3s}
+.card:hover .thumb img{transform:scale(1.05)}
+.play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:52px;height:52px;background:rgba(255,255,255,.92);border-radius:50%;display:grid;place-items:center;color:#000;font-size:18px;z-index:2}
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:18px auto 0;max-width:1600px;padding:0 22px}
+.tools input{height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:#fff;width:260px;outline:none}
+.fbtn{height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--dim);font-size:11px;font-weight:700;cursor:pointer}
+.fbtn.active{background:#fff;color:#000;border-color:#fff}
+.nowplaying{margin:12px 0 0;padding:12px 16px;background:linear-gradient(90deg,rgba(255,214,10,.12),rgba(255,42,42,.08));border:1px solid rgba(255,214,10,.25);border-radius:12px;display:flex;align-items:center;gap:12px}
+</style>
+</head>
+<body>
+<header class="header"><div class="logo"><div class="logo-icon"><img src="https://i.ibb.co/gb8gZvxM/44992.png" alt="N"></div><div><div class="highlight" style="font-size:30px;line-height:1;letter-spacing:-0.02em">NEOVIZER CHANNEL</div><div style="font-size:9px;letter-spacing:.22em;color:#888;margin-top:2px">SÓ FILMES ADICIONADOS</div></div></div><div class="live"><span class="dot"></span>24/7 AUTOMÁTICO • SOM ATIVADO</div></header>
+
+<div class="hero">
+
+
+<div class="player-shell" id="shell">
+<div class="video-wrap" id="mainWrap">
+<div class="yt-wrap-main" id="ytMain"><div id="player"></div><div class="topcover"></div><div class="yt-mask"><span class="yt-mask-title" id="ytMaskTitle">Carregando...</span><img src="https://i.ibb.co/gb8gZvxM/44992.png" alt="NEOVIZER CHANNEL"></div></div>
+<div class="topbar"><div class="brand"><span class="highlight">Neovizer Channel</span></div><div style="padding:8px 14px;background:rgba(255,30,30,.9);border-radius:999px;font-size:10px;font-weight:900;display:flex;gap:6px;align-items:center"><span class="dot"></span>24/7 • SOM ATIVADO</div></div>
+<div class="custom-controls" id="customControls">
+<div class="progress-container" id="progressContainer"><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
+<div class="controls-row">
+<div class="left-controls">
+<button class="ctrl-btn play-pause" id="ctrlPlay">▶</button>
+<button class="ctrl-btn" id="ctrlPrev">◀◀</button>
+<button class="ctrl-btn" id="ctrlNext">▶▶</button>
+<span class="time-display" id="timeDisplay">00:00 / 00:00</span>
+<span class="title-display" id="ctrlTitle">NEOVIZER CHANNEL</span>
+</div>
+<div class="right-controls">
+<button class="ctrl-btn" id="ctrlMute">🔊</button>
+<input type="range" id="volumeSlider" min="0" max="100" value="100" class="volume-slider">
+<button class="ctrl-btn" id="ctrlFullscreen">⛶</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="nowplaying" id="nowPlaying"><div style="width:36px;height:36px;background:linear-gradient(135deg,#FFD60A,#FF8A00);border-radius:8px;display:grid;place-items:center;color:#000;font-weight:900">▶</div><div><div style="font-size:11px;color:#888">RODANDO AUTOMÁTICO COM SOM</div><div id="nowTitle" style="font-size:13px;font-weight:700">Carregando...</div></div><div style="margin-left:auto;display:flex;gap:8px"><button id="prevBtn" style="padding:6px 12px;border-radius:999px;border:1px solid #333;background:#222;color:#fff;cursor:pointer;font-size:11px">◀ Anterior</button><button id="nextBtn" style="padding:6px 12px;border-radius:999px;border:1px solid #FFD60A;background:#FFD60A;color:#000;cursor:pointer;font-size:11px;font-weight:800">Próximo ▶</button></div></div>
+</div>
+
+<div class="tools"><input id="search" placeholder="Buscar filme..."><div id="filters" style="display:flex;gap:8px"></div></div>
+<div class="grid" id="grid"></div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+const MOVIES = [
+{id:'nmrQacI-6Ps',t:'A Aranha Negra',g:'Suspense',y:'2022'},
+{id:'cyhOTguXC8k',t:'Fugindo do Passado',g:'Ação / Suspense',y:'2004'},
+{id:'x2p4OogEi4Y',t:'Vendetta',g:'Ação / Vingança',y:'2022'},
+{id:'IJbPg8AxRtA',t:'Agente do Futuro',g:'Ficção Científica / Ação',y:'2014'},
+{id:'ebV9z_30EXg',t:'Caos',g:'Ação / Policial / Suspense',y:'2005'},
+{id:'0yfDkP8ywZg',t:'Sem Rastros',g:'Ação',y:'2014'},
+{id:'TeyfdzQuKt4',t:'Sem Perdão',g:'Ação',y:''},
+{id:'48yJnr10n3U',t:'Vingança Será Cruel',g:'Ação / Suspense',y:''},
+{id:'DOAh7rGq7HU',t:'Filme de Ação e Luta',g:'Ação / Luta',y:'2024'},
+{id:'qUVEtr2gxk8',t:'América Submersa',g:'Desastre / Ação',y:'2023'},
+{id:'AnIGIekG_pE',t:'Ela Não É Sua Filha',g:'Suspense',y:''},
+{id:'vYkrLmSI9PY',t:'Presos com o Demônio',g:'Terror / Suspense',y:'2021'},
+{id:'sHvn2t1cStg',t:'Sem Culpa',g:'Ação',y:'2021'},
+{id:'Ew5Y_48TVEs',t:'Lobos da Lua',g:'Sci-Fi / Faroeste Sobrenatural',y:''},
+{id:'qZQ8PMFHws8',t:'Vingança após sair da cadeia',g:'Ação / Suspense',y:''},
+{id:'I6mT6otPSW8',t:'Caçada Brutal por Vingança',g:'Ação / Vingança',y:''},
+{id:'16oPj9V5uDM',t:'Terror em Nave após Hibernação',g:'Ficção Científica / Terror',y:''},
+{id:'GqCHhieXCco',t:'Perigo em Bangkok',g:'Ação / Suspense',y:''},
+{id:'GwQlxkIPsS8',t:'Blade Runner 2049',g:'Ficção Científica',y:'2017'},
+{id:'_c_FmE1OXHI',t:'O Nevoeiro',g:'Terror',y:'2007'},
+{id:'ZdVRjefZrng',t:'Filme de Ação e Luta',g:'Ação / Luta',y:''},
+{id:'n5TZ7JdlEX4',t:'Soldado do Pentágono em Missão',g:'Ação / Mistério',y:''},
+{id:'bROki-6tICA',t:'Last Day',g:'Ação / Luta',y:'2025'},
+{id:'CpReURtPQLE',t:'Criminoso para Salvar a Família',g:'Ação / Drama',y:''},
+{id:'sumPC8EwObE',t:'Assassino Sem Rastro',g:'Ação',y:'2025'},
+{id:'G3-YZFRJNj0',t:'American Sicario',g:'Ação / Luta',y:'2025'},
+{id:'hM6SZKpkmds',t:'Mundo à Beira da Extinção',g:'Suspense / Ficção',y:''},
+{id:'vAq-HgEeHrQ',t:'Melhor Filme de Ação 2025',g:'Ação',y:'2025'},
+{id:'lVGxPfzERWE',t:'A Profecia do Fim do Mundo',g:'Desastre / Ação',y:''},
+{id:'MktUqREeobs',t:'A Caçada',g:'Suspense / Ação',y:'2025'},
+{id:'LN6nH9JlYMA',t:'Ação 2024 Full HD',g:'Ação',y:'2024'},
+{id:'h5YFNAuzqDo',t:'Ice: Um Dia Depois do Amanhã',g:'Desastre / Ficção Científica',y:''},
+{id:'IAXaOWPp1_Q',t:'O Fim do Mundo',g:'Desastre / Ação',y:''},
+{id:'P_ZljUL4MnQ',t:'O Bunker Projeto 12',g:'Ação / Suspense',y:''},
+{id:'VClenge-_Sg',t:'Deixada Para Morrer',g:'Suspense / Terror',y:''},
+{id:'RY8uyUe40J4',t:'Fuga da Prisão',g:'Ação',y:''},
+{id:'Bbok9BI4KJI',t:'Desastre e Ficção Científica',g:'Desastre / Ficção Científica',y:''},
+{id:'GFak_WvmnCU',t:'Guardian',g:'Ficção Científica',y:''},
+{id:'sQJZJqxge88',t:'Um Dia para Viver',g:'Ação / Ficção Científica',y:'2017'},
+{id:'HlMGP1OwJVo',t:'Tudo ou Nada',g:'Ação / Aventura',y:'2026'},
+{id:'kPm1xh7Td28',t:'Vingança após 20 Anos de Prisão',g:'Ação / Vingança',y:''},
+{id:'ggPId5p6Yck',t:'Última Chance',g:'Ação / Aventura',y:'2026'},
+{id:'KKJ5e_ksjO4',t:'O Destructo',g:'Ação',y:''},
+{id:'3f5TlLMocHs',t:'Corrida Mortal',g:'Ação / Suspense',y:''},
+{id:'Qqs8YEe1874',t:'O Último Tiro Certo',g:'Ação',y:'2026'},
+{id:'Lc5tvT4xMlg',t:'Godsend',g:'Suspense / Terror',y:''},
+{id:'5Ao5fyXnaUs',t:'A Tribo',g:'Ação',y:''},
+{id:'4_8tr8WqYT0',t:'The Crow: Salvation',g:'Ação / Fantasia',y:'2000'},
+{id:'rZfoXCNRNcc',t:'Transporter 3',g:'Ação / Luta',y:'2008'},
+{id:'iJrP6tm3DJY',t:'Statham e Jet Li',g:'Ação / Artes Marciais',y:'2026'},
+{id:'SIraRjKfRJA',t:'Água Acabou - Monstros',g:'Ficção Científica / Terror',y:''},
+{id:'12aWwFFNZUo',t:'Ilha Deserta - Sobrevivência',g:'Ação / Suspense',y:''},
+{id:'5O7Iqp044JM',t:'Campo de Treinamento Arena',g:'Ação / Militar',y:'2026'},
+{id:'zJ_PMsjZSlQ',t:'Ação Implacável',g:'Ação',y:''},
+{id:'fJOG2UDNnlw',t:'Dominion',g:'Ficção Científica / Ação',y:''},
+{id:'n6SxCK5VFfU',t:'Terror Completo Dublado',g:'Terror',y:''},
+{id:'F2lxbf6Q0JE',t:'Quebra de Confiança',g:'Suspense / Drama',y:''},
+{id:'wLhOAVPEywM',t:'Warrior 2',g:'Ação / Luta',y:'2026'},
+{id:'iDq5m-j60UU',t:'Kin',g:'Ação / Ficção Científica',y:'2018'},
+{id:'P8lkmMGDnYg',t:'Colombiana 2',g:'Ação',y:'2026'},
+{id:'lCQUH7ngTZg',t:'Ação Pós-Apocalíptica',g:'Ação / Pós-Apocalíptico',y:''},
+{id:'IaQPgcT-37c',t:'Terror Pesado 2026',g:'Terror',y:'2026'},
+{id:'7n4nkDhyZqo',t:'Lobisomens em Nova York',g:'Ação / Terror / Fantasia',y:''},
+{id:'v7b2EJq-5zs',t:'Terror Noturno - Não Ligue',g:'Terror',y:''},
+{id:'GcSMNjSGyI4',t:'State of Siege: Temple Attack',g:'Ação / Militar',y:'2021'},
+{id:'UHYFSwmp9qs',t:'Agente Espetacular',g:'Ação / Comédia',y:''},
+{id:'tpwcIrEtLpg',t:'Ação HD 2026',g:'Ação',y:'2026'},
+{id:'0lLurXaHzBI',t:'Ação Hollywood 2026',g:'Ação',y:'2026'},
+{id:'8W2gTENbdEs',t:'A Estrada do Destino',g:'Ação / Aventura',y:'2026'},
+{id:'HJoIri7KxMs',t:'Carga Explosiva 3',g:'Ação',y:'2008'},
+{id:'nIHU2SVLNQ0',t:'Inception 2',g:'Ação / Ficção Científica',y:''},
+{id:'3hZkHSRdx-Y',t:'Jogo Mortal 2026',g:'Ação / Suspense',y:'2026'},
+{id:'Q_mBx8wDXQk',t:'Ação e Luta 2024',g:'Ação / Luta',y:'2024'},
+{id:'_NheanJzzX4',t:'Sob a Lua Cheia',g:'Ação / Terror',y:'2025'},
+{id:'CIqMO3Z56-4',t:'Sem Identidade',g:'Suspense',y:''},
+{id:'YBLMt-LyWgM',t:'O Grande Golpe',g:'Comédia Policial',y:''},
+{id:'kjEIR3Uf2Lk',t:'Dia de Folga',g:'Ação',y:'2024'},
+{id:'s3ixNG8zkyw',t:'Ação e Aventura 2024',g:'Ação / Aventura',y:'2024'},
+{id:'dr93j1JhDyY',t:'Outlander: Guerreiro vs Predador',g:'Ação / Ficção Científica',y:''},
+{id:'WKfHsG8SVVo',t:'Ação e Luta 2024',g:'Ação / Luta',y:'2024'},
+{id:'Ye_O6hdvh3o',t:'Quem Matou Seu Pai - Guerra',g:'Ação / Vingança',y:''},
+{id:'C-2Rjrdoz8s',t:'Terror em Hotel Abandonado',g:'Terror / Suspense',y:''},
+{id:'7dDjLcBg5H0',t:'Floresta de Terror',g:'Terror / Suspense',y:''},
+{id:'orf4k9oeioY',t:'Missão Secreta',g:'Ação / Espionagem',y:''},
+{id:'cItsjRg7g4w',t:'Venom 3',g:'Ação / Aventura / Ficção',y:'2024'},
+{id:'-dlT43qieBQ',t:'Melhor Ação 2024',g:'Ação',y:'2024'},
+{id:'Pz2k2M6AuBQ',t:'Storm Cell',g:'Desastre / Ação',y:'2008'},
+{id:'HvxVPFajD00',t:'Ação 2023',g:'Ação',y:'2023'},
+{id:'Jx7YYfhv_94',t:'Swelter: A Vingança',g:'Ação / Suspense',y:'2014'},
+{id:'OqnEAIV_hZo',t:'Ação 2024 Novo',g:'Ação',y:'2024'},
+{id:'vN0p8mWnu0o',t:'Anjos da Noite',g:'Ação / Terror / Vampiros',y:'2023'},
+{id:'p70NQC4g5eE',t:'Sem Saída',g:'Suspense / Sobrevivência',y:'2024'},
+{id:'AbOFYmGiAuU',t:'Tubarões em Cidade Submersa',g:'Terror / Aventura',y:''},
+{id:'HU8ydpbnkjQ',t:'Ação e Luta 2023',g:'Ação / Luta',y:'2023'},
+{id:'tubhE2pfVeI',t:'Segredo do Passado',g:'Ação / Suspense',y:''},
+{id:'daEzSIxULB0',t:'Treinamento Mortal',g:'Ação / Espionagem',y:''},
+{id:'OdC2Q-riqAw',t:'Contrato Perigoso',g:'Ação',y:'2022'}
+];
+function catOf(m){
+  const g = (m.g||'') + ' ' + (m.t||'');
+  const s = g.toUpperCase();
+  if(s.includes('TERROR'))return'Terror';
+  if(s.includes('FICÇÃO')||s.includes('FICCAO')||s.includes('SCI-FI')||s.includes('FICÇÃO CIENTÍFICA')||s.includes('GUARDIAN')||s.includes('BLADE')||s.includes('DOMINION')||s.includes('VENOM')||s.includes('OUTLANDER')||s.includes('AUTOMATA')||s.includes('FUTURO'))return'Ficção';
+  if(s.includes('SUSPENSE')||s.includes('CONFIANÇA')||s.includes('IDENTIDADE')||s.includes('ARANHA')||s.includes('SEM CULPA')||s.includes('SEM SAÍDA'))return'Suspense';
+  if(s.includes('DESASTRE')||s.includes('FIM DO MUNDO')||s.includes('PROFECIA')||s.includes('STORM')||s.includes('ICE')||s.includes('SUBMERSA')||s.includes('AMÉRICA'))return'Desastre';
+  return'Ação';
+}
+const CATS=['Todos','Ação','Terror','Ficção','Suspense','Desastre'];
+let active='Todos',q='',currentIndex=0,player=null,playerReady=false;
+const grid=document.getElementById('grid'),filters=document.getElementById('filters'),search=document.getElementById('search'),nowTitle=document.getElementById('nowTitle');
+
+function shuffleArray(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    const tmp=arr[i];arr[i]=arr[j];arr[j]=tmp;
+  }
+  return arr;
+}
+let playOrder=shuffleArray([...Array(MOVIES.length).keys()]);
+let orderPos=0;
+
+function getRandomIndex(){return Math.floor(Math.random()*MOVIES.length);}
+
+function updateTitle(i){
+  nowTitle.textContent=MOVIES[i].t;
+  currentIndex=i;
+  const idxInOrder=playOrder.indexOf(i);
+  if(idxInOrder!==-1)orderPos=idxInOrder;
+  const ctrlTitle=document.getElementById('ctrlTitle');
+  if(ctrlTitle)ctrlTitle.textContent=MOVIES[i].t;
+  const ytMaskTitle=document.getElementById('ytMaskTitle');
+  if(ytMaskTitle)ytMaskTitle.textContent=MOVIES[i].t;
+  renderGrid();
+}
+
+function playIndex(i){
+  if(i<0||i>=MOVIES.length)return;
+  const videoId=MOVIES[i].id;
+  updateTitle(i);
+  const ytMain=document.getElementById('ytMain');
+  if(playerReady && player && typeof player.loadVideoById==='function'){
+    try{
+      player.loadVideoById(videoId);
+      try{player.unMute();player.setVolume(100);}catch(_){}
+      return;
+    }catch(e){}
+  }
+  let iframe=document.getElementById('ytFrame');
+  if(iframe){
+    iframe.src='https://www.youtube-nocookie.com/embed/'+videoId+'?autoplay=1&rel=0&modestbranding=1&controls=0';
+  }else{
+    ytMain.innerHTML='<iframe id="ytFrame" src="https://www.youtube-nocookie.com/embed/'+videoId+'?autoplay=1&rel=0&modestbranding=1&controls=0" style="width:100%;height:100%;border:0" allow="autoplay; encrypted-media" allowfullscreen></iframe><div class="topcover"></div><div class="yt-mask"><span class="yt-mask-title" id="ytMaskTitle">Carregando...</span><img src="https://i.ibb.co/gb8gZvxM/44992.png" alt="NEOVIZER CHANNEL"></div>';
+  }
+}
+
+window.onYouTubeIframeAPIReady=function(){
+  try{
+    const playerDiv=document.getElementById('player');
+    if(!playerDiv){
+      const ytMain=document.getElementById('ytMain');
+      ytMain.innerHTML='<div id="player"></div><div class="topcover"></div><div class="yt-mask"><span class="yt-mask-title" id="ytMaskTitle">Carregando...</span><img src="https://i.ibb.co/gb8gZvxM/44992.png" alt="NEOVIZER CHANNEL"></div>'+ytMain.innerHTML;
+    }
+    player=new YT.Player('player',{
+      height:'100%',width:'100%',
+      videoId:MOVIES[currentIndex].id,
+      playerVars:{rel:0,modestbranding:1,iv_load_policy:3,playsinline:1,autoplay:1,controls:0,disablekb:0,fs:0},
+      events:{onReady:onPlayerReady,onStateChange:onPlayerStateChange,onError:onPlayerError}
+    });
+  }catch(e){}
+};
+
+function onPlayerReady(e){
+  playerReady=true;
+  try{e.target.unMute();e.target.setVolume(100);e.target.playVideo();}catch(err){try{e.target.playVideo();}catch(_){}}
+}
+
+function onPlayerStateChange(e){
+  const ctrlPlay=document.getElementById('ctrlPlay');
+  if(e.data===YT.PlayerState.PLAYING){if(ctrlPlay)ctrlPlay.textContent='❚❚';}
+  if(e.data===YT.PlayerState.PAUSED){if(ctrlPlay)ctrlPlay.textContent='▶';}
+  if(e.data===YT.PlayerState.ENDED){
+    orderPos++;
+    if(orderPos>=playOrder.length){playOrder=shuffleArray([...Array(MOVIES.length).keys()]);orderPos=0;}
+    playIndex(playOrder[orderPos]);
+  }
+}
+
+function onPlayerError(e){
+  orderPos++;
+  if(orderPos>=playOrder.length){playOrder=shuffleArray([...Array(MOVIES.length).keys()]);orderPos=0;}
+  setTimeout(function(){playIndex(playOrder[orderPos])},800);
+}
+
+function renderFilters(){
+  filters.innerHTML=CATS.map(function(c){return '<button class="fbtn '+(c===active?'active':'')+'" data-c="'+c+'">'+c+'</button>'}).join('');
+  filters.querySelectorAll('.fbtn').forEach(function(b){b.onclick=function(){active=b.dataset.c;renderFilters();renderGrid()}})
+}
+
+function renderGrid(){
+  const list=MOVIES.filter(function(m){
+    const ok=active==='Todos'||catOf(m)===active;
+    return ok&&(!q||m.t.toLowerCase().indexOf(q.toLowerCase())!==-1)
+  });
+  grid.innerHTML=list.map(function(m){
+    const realIdx=MOVIES.findIndex(function(x){return x.id===m.id});
+    const isActive=realIdx===currentIndex;
+    return '<div class="card '+(isActive?'active':'')+'" data-idx="'+realIdx+'"><div class="thumb"><img loading="lazy" src="https://img.youtube.com/vi/'+m.id+'/hqdefault.jpg" onerror="this.src=\'https://img.youtube.com/vi/'+m.id+'/mqdefault.jpg\'"><div class="play">▶</div><div style="position:absolute;left:8px;top:8px;background:rgba(0,0,0,.7);padding:4px 8px;border-radius:999px;font-size:9px;font-weight:800">'+catOf(m).toUpperCase()+'</div></div><div style="padding:10px"><div style="font-size:13px;font-weight:600;line-height:1.3">'+m.t+'</div><div style="font-size:10px;color:#888;margin-top:4px"><span class="highlight" style="font-size:10px">NEOVIZER</span> • '+(isActive?'TOCANDO AGORA':'')+' DUBLADO HD</div></div></div>'
+  }).join('');
+  document.querySelectorAll('.card').forEach(function(c){
+    c.onclick=function(){const idx=parseInt(c.dataset.idx);playIndex(idx);};
+  });
+}
+
+search.oninput=function(e){q=e.target.value;renderGrid()}
+renderFilters();
+
+const initialRandom=getRandomIndex();
+currentIndex=initialRandom;
+playOrder=shuffleArray([...Array(MOVIES.length).keys()]);
+const posInitial=playOrder.indexOf(initialRandom);
+orderPos=posInitial!==-1?posInitial:0;
+
+(function initPlayer(){
+  const ytMain=document.getElementById('ytMain');
+  ytMain.innerHTML='<iframe id="ytFrame" src="https://www.youtube-nocookie.com/embed/'+MOVIES[initialRandom].id+'?autoplay=1&rel=0&modestbranding=1&controls=0" style="width:100%;height:100%;border:0" allow="autoplay; encrypted-media" allowfullscreen></iframe><div class="topcover"></div><div class="yt-mask"><span class="yt-mask-title" id="ytMaskTitle">Carregando...</span><img src="https://i.ibb.co/gb8gZvxM/44992.png" alt="NEOVIZER CHANNEL"></div>';
+  updateTitle(initialRandom);
+})();
+
+renderGrid();
+
+document.getElementById('nextBtn').onclick=function(){
+  orderPos++;
+  if(orderPos>=playOrder.length){playOrder=shuffleArray([...Array(MOVIES.length).keys()]);orderPos=0;}
+  playIndex(playOrder[orderPos]);
+};
+
+document.getElementById('prevBtn').onclick=function(){
+  orderPos--;
+  if(orderPos<0){playOrder=shuffleArray([...Array(MOVIES.length).keys()]);orderPos=playOrder.length-1;}
+  playIndex(playOrder[orderPos]);
+};
+
+// CUSTOM CONTROLS SOBREPONDO YOUTUBE - APARECE AO PASSAR MOUSE
+(function(){
+  const mainWrap=document.getElementById('mainWrap');
+  const customControls=document.getElementById('customControls');
+  const ctrlPlay=document.getElementById('ctrlPlay');
+  const ctrlPrev=document.getElementById('ctrlPrev');
+  const ctrlNext=document.getElementById('ctrlNext');
+  const ctrlMute=document.getElementById('ctrlMute');
+  const ctrlFullscreen=document.getElementById('ctrlFullscreen');
+  const volumeSlider=document.getElementById('volumeSlider');
+  const progressContainer=document.getElementById('progressContainer');
+  const progressFill=document.getElementById('progressFill');
+  const timeDisplay=document.getElementById('timeDisplay');
+  let hideTimeout=null;
+
+  function showControls(){
+    customControls.classList.add('visible');
+    clearTimeout(hideTimeout);
+    hideTimeout=setTimeout(function(){customControls.classList.remove('visible');},3000);
+  }
+  function hideControls(){customControls.classList.remove('visible');}
+
+  mainWrap.addEventListener('mousemove',showControls);
+  mainWrap.addEventListener('mouseenter',showControls);
+  mainWrap.addEventListener('mouseleave',hideControls);
+  customControls.addEventListener('mouseenter',function(){clearTimeout(hideTimeout);});
+  customControls.addEventListener('mouseleave',function(){hideTimeout=setTimeout(function(){customControls.classList.remove('visible');},500);});
+
+  function formatTime(sec){
+    sec=Math.floor(sec||0);
+    const m=Math.floor(sec/60);
+    const s=sec%60;
+    return (m<10?'0'+m:m)+':'+(s<10?'0'+s:s);
+  }
+
+  function updateProgress(){
+    try{
+      if(playerReady && player && typeof player.getCurrentTime==='function' && typeof player.getDuration==='function'){
+        const current=player.getCurrentTime();
+        const duration=player.getDuration();
+        if(duration>0){
+          const percent=(current/duration)*100;
+          progressFill.style.width=percent+'%';
+          timeDisplay.textContent=formatTime(current)+' / '+formatTime(duration);
+        }
+        const state=player.getPlayerState();
+        if(ctrlPlay){
+          if(state===1){ctrlPlay.textContent='❚❚';}
+          else{ctrlPlay.textContent='▶';}
+        }
+        try{
+          const muted=player.isMuted();
+          if(ctrlMute)ctrlMute.textContent=muted?'🔇':'🔊';
+        }catch(_){}
+      }
+    }catch(e){}
+  }
+
+  setInterval(updateProgress,600);
+
+  if(ctrlPlay)ctrlPlay.onclick=function(){
+    if(playerReady && player){
+      try{
+        const state=player.getPlayerState();
+        if(state===1){player.pauseVideo();}
+        else{player.playVideo();}
+      }catch(e){}
+    }else{
+      const iframe=document.getElementById('ytFrame');
+      if(iframe){iframe.src=iframe.src;}
+    }
+    showControls();
+  };
+
+  if(ctrlPrev)ctrlPrev.onclick=function(){
+    orderPos--;
+    if(orderPos<0){playOrder=shuffleArray([...Array(MOVIES.length).keys()]);orderPos=playOrder.length-1;}
+    playIndex(playOrder[orderPos]);
+    showControls();
+  };
+
+  if(ctrlNext)ctrlNext.onclick=function(){
+    orderPos++;
+    if(orderPos>=playOrder.length){playOrder=shuffleArray([...Array(MOVIES.length).keys()]);orderPos=0;}
+    playIndex(playOrder[orderPos]);
+    showControls();
+  };
+
+  if(ctrlMute)ctrlMute.onclick=function(){
+    if(playerReady && player){
+      try{
+        if(player.isMuted()){player.unMute();player.setVolume(volumeSlider.value);this.textContent='🔊';}
+        else{player.mute();this.textContent='🔇';}
+      }catch(e){}
+    }
+    showControls();
+  };
+
+  if(volumeSlider)volumeSlider.oninput=function(){
+    const vol=this.value;
+    if(playerReady && player){
+      try{player.setVolume(vol);player.unMute();if(ctrlMute)ctrlMute.textContent=vol==0?'🔇':'🔊';}catch(e){}
+    }
+  };
+
+  if(progressContainer)progressContainer.onclick=function(e){
+    const rect=this.getBoundingClientRect();
+    const pos=(e.clientX-rect.left)/rect.width;
+    if(playerReady && player && typeof player.getDuration==='function'){
+      try{
+        const duration=player.getDuration();
+        player.seekTo(duration*pos,true);
+      }catch(err){}
+    }
+  };
+
+  if(ctrlFullscreen)ctrlFullscreen.onclick=function(){
+    const shell=document.getElementById('shell');
+    if(!document.fullscreenElement){shell.requestFullscreen().catch(function(){});}
+    else{document.exitFullscreen();}
+    showControls();
+  };
+
+  
+  // Em tela cheia - esconde demais infos mas MANTÉM o logo
+  document.addEventListener('fullscreenchange', function(){
+    const topbar = document.querySelector('.topbar');
+    const topcover = document.querySelector('.topcover');
+    const ytMask = document.querySelector('.yt-mask');
+    const isFull = !!document.fullscreenElement;
+    if(topbar){ topbar.style.display = isFull ? 'none' : ''; }
+    if(topcover){ topcover.style.display = isFull ? 'none' : ''; }
+    // Logo permanece visível mesmo em tela cheia
+    if(ytMask){ ytMask.style.display = ''; ytMask.style.opacity = '1'; ytMask.style.visibility = 'visible'; }
+  });
+
+  setTimeout(showControls,1200);
+})();
+</script>
+</body>
+</html>
